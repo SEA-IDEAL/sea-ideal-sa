@@ -45,7 +45,7 @@ function parseProductsCsv(text) {
   }
 
   const [headers, ...rows] = records;
-  const required = ['row', 'product_name', 'price', 'shop', 'commission', 'link', 'sheet_name'];
+  const required = ['row', 'product_name', 'price', 'shop', 'link', 'sheet_name'];
   if (!headers || required.some(name => !headers.includes(name)) ||
       (!headers.includes('image_url') && !headers.includes('image_token')) ||
       new Set(headers).size !== headers.length) {

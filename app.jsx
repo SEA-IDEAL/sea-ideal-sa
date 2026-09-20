@@ -117,7 +117,7 @@ function ProductCard({ product, onClick, index }) {
             onError={handleImageError}
           />
         )}
-        <div className="commission-badge">{product.commission}</div>
+        {product.commission?.trim() && <div className="commission-badge">{product.commission}</div>}
       </div>
       <div className="product-info">
         <div className="product-name">{product.product_name}</div>
@@ -171,7 +171,7 @@ function MiniProductCard({ product, onClick, index }) {
         <div className="mini-card-name">{product.product_name}</div>
         <div className="mini-card-bottom">
           <div className="mini-card-price">{product.price}</div>
-          <div className="mini-commission">{product.commission}</div>
+          {product.commission?.trim() && <div className="mini-commission">{product.commission}</div>}
         </div>
       </div>
     </div>
@@ -205,7 +205,7 @@ function ProductModal({ product, onClose }) {
           <button className="modal-close" onClick={onClose}>
             <IconClose />
           </button>
-          <div className="modal-commission">佣金 {product.commission}</div>
+          {product.commission?.trim() && <div className="modal-commission">佣金 {product.commission}</div>}
         </div>
         <div className="modal-body">
           <div className="modal-shop">{product.shop}</div>
@@ -214,16 +214,18 @@ function ProductModal({ product, onClose }) {
             <div className="modal-price">{product.price}</div>
             <div className="modal-price-note">售价</div>
           </div>
-          <div className="modal-stats">
-            <div className="stat-item">
-              <div className="stat-label">创作者佣金率</div>
-              <div className="stat-value commission-stat">{product.commission}</div>
+          {product.commission?.trim() && (
+            <div className="modal-stats">
+              <div className="stat-item">
+                <div className="stat-label">创作者佣金率</div>
+                <div className="stat-value commission-stat">{product.commission}</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-label">所属商家</div>
+                <div className="stat-value" style={{ fontSize: '13px' }}>{product.shop}</div>
+              </div>
             </div>
-            <div className="stat-item">
-              <div className="stat-label">所属商家</div>
-              <div className="stat-value" style={{ fontSize: '13px' }}>{product.shop}</div>
-            </div>
-          </div>
+          )}
           <a
             className="modal-cta"
             href={product.link}
@@ -231,7 +233,7 @@ function ProductModal({ product, onClose }) {
             rel="noopener noreferrer"
           >
             <IconExternal />
-            前往推广链接
+            查看商品
           </a>
         </div>
       </div>
@@ -303,7 +305,7 @@ function App() {
       .then(csv => setProducts(parseProductsCsv(csv)))
       .catch(error => {
         console.error('Failed to load products:', error);
-        setLoadError('商品数据加载失败，请检查 assets/products.csv。');
+        setLoadError(error.message.startsWith('CSV') ? error.message : '商品数据加载失败，请检查 assets/products.csv。');
       })
       .finally(() => setLoading(false));
   }, []);
@@ -313,6 +315,7 @@ function App() {
   const hasFrenchData = products.some(product => /€|\bFR\b|France|法国/i.test(
     `${product.price} ${product.shop} ${product.sheet_name}`
   ));
+  const hasCommission = products.some(product => product.commission?.trim());
 
   // Get unique merchants
   const merchants = useMemo(() => {
@@ -349,6 +352,7 @@ function App() {
     // Commission filter
     if (commissionFilter !== 'all') {
       result = result.filter(p => {
+        if (!p.commission?.trim()) return false;
         const comm = parseCommission(p.commission);
         if (commissionFilter === 'high') return comm >= 15;
         if (commissionFilter === 'medium') return comm >= 10 && comm < 15;
@@ -497,7 +501,7 @@ function App() {
       )}
 
       {/* Commission Filter Chips */}
-      {viewMode !== 'merchantDetail' && (
+      {hasCommission && viewMode !== 'merchantDetail' && (
         <div className="filter-chips" style={{ paddingTop: '12px' }}>
           <div
             className={`filter-chip ${commissionFilter === 'all' ? 'active' : ''}`}
@@ -542,12 +546,14 @@ function App() {
           >
             默认
           </button>
-          <button
-            className={`sort-btn ${sortBy === 'commission-desc' ? 'active' : ''}`}
-            onClick={() => setSortBy('commission-desc')}
-          >
-            佣金最高
-          </button>
+          {hasCommission && (
+            <button
+              className={`sort-btn ${sortBy === 'commission-desc' ? 'active' : ''}`}
+              onClick={() => setSortBy('commission-desc')}
+            >
+              佣金最高
+            </button>
+          )}
           <button
             className={`sort-btn ${sortBy === 'price-asc' ? 'active' : ''}`}
             onClick={() => setSortBy('price-asc')}
@@ -671,13 +677,15 @@ function App() {
           <IconGrid active={viewMode === 'allProducts' && commissionFilter === 'all'} />
           <span className="nav-label">全部商品</span>
         </div>
-        <div
-          className={`nav-item ${viewMode === 'allProducts' && commissionFilter === 'high' ? 'active' : ''}`}
-          onClick={handleViewHighCommission}
-        >
-          <IconCommission active={viewMode === 'allProducts' && commissionFilter === 'high'} />
-          <span className="nav-label">高佣精选</span>
-        </div>
+        {hasCommission && (
+          <div
+            className={`nav-item ${viewMode === 'allProducts' && commissionFilter === 'high' ? 'active' : ''}`}
+            onClick={handleViewHighCommission}
+          >
+            <IconCommission active={viewMode === 'allProducts' && commissionFilter === 'high'} />
+            <span className="nav-label">高佣精选</span>
+          </div>
+        )}
       </div>
 
       {/* Product Detail Modal */}
