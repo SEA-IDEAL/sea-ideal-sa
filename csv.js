@@ -45,8 +45,10 @@ function parseProductsCsv(text) {
   }
 
   const [headers, ...rows] = records;
-  const required = ['row', 'product_name', 'price', 'shop', 'commission', 'link', 'image_token', 'sheet_name'];
-  if (!headers || required.some(name => !headers.includes(name)) || new Set(headers).size !== headers.length) {
+  const required = ['row', 'product_name', 'price', 'shop', 'commission', 'link', 'sheet_name'];
+  if (!headers || required.some(name => !headers.includes(name)) ||
+      (!headers.includes('image_url') && !headers.includes('image_token')) ||
+      new Set(headers).size !== headers.length) {
     throw new Error('CSV 缺少必需列或列名重复');
   }
   return rows.map((values, index) => {

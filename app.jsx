@@ -15,6 +15,23 @@ function parseCommission(commStr) {
   return match ? parseFloat(match[0]) : 0;
 }
 
+function useProductImage(product) {
+  const [imageIndex, setImageIndex] = useState(0);
+  const sources = [];
+  if (product?.image_url?.trim().startsWith('https://')) {
+    sources.push(product.image_url.trim());
+  }
+  if (product?.image_token?.trim()) {
+    sources.push(`assets/images/${product.image_token.trim()}.jpg`);
+  }
+  const imgSrc = sources[imageIndex];
+  return {
+    imgSrc,
+    imgError: !imgSrc,
+    handleImageError: () => setImageIndex(index => index + 1)
+  };
+}
+
 // ========== Icons ==========
 const IconSearch = () => (
   <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -85,9 +102,8 @@ const IconBack = () => (
 
 // ========== Product Card ==========
 function ProductCard({ product, onClick, index }) {
-  const imgSrc = `assets/images/${product.image_token}.jpg`;
+  const { imgSrc, imgError, handleImageError } = useProductImage(product);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
-  const [imgError, setImgError] = React.useState(false);
 
   return (
     <div className="product-card" onClick={onClick} style={style}>
@@ -98,7 +114,7 @@ function ProductCard({ product, onClick, index }) {
             src={imgSrc}
             alt={product.product_name}
             loading="lazy"
-            onError={() => setImgError(true)}
+            onError={handleImageError}
           />
         )}
         <div className="commission-badge">{product.commission}</div>
@@ -119,9 +135,8 @@ function ProductCard({ product, onClick, index }) {
 
 // ========== Mini Product Card ==========
 function MiniProductCard({ product, onClick, index }) {
-  const imgSrc = `assets/images/${product.image_token}.jpg`;
+  const { imgSrc, imgError, handleImageError } = useProductImage(product);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
-  const [imgError, setImgError] = React.useState(false);
 
   return (
     <div className="mini-card" onClick={onClick} style={style}>
@@ -140,7 +155,7 @@ function MiniProductCard({ product, onClick, index }) {
             src={imgSrc}
             alt={product.product_name}
             loading="lazy"
-            onError={() => setImgError(true)}
+            onError={handleImageError}
             style={{ position: 'absolute', top: 0, left: 0 }}
           />
         )}
@@ -165,10 +180,8 @@ function MiniProductCard({ product, onClick, index }) {
 
 // ========== Product Detail Modal ==========
 function ProductModal({ product, onClose }) {
-  const [imgError, setImgError] = React.useState(false);
+  const { imgSrc, imgError, handleImageError } = useProductImage(product);
   if (!product) return null;
-
-  const imgSrc = `assets/images/${product.image_token}.jpg`;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -181,7 +194,7 @@ function ProductModal({ product, onClose }) {
           justifyContent: 'center'
         }}>
           {!imgError ? (
-            <img className="modal-image" src={imgSrc} alt={product.product_name} onError={() => setImgError(true)} />
+            <img className="modal-image" src={imgSrc} alt={product.product_name} onError={handleImageError} />
           ) : (
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#FF4D6D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.4 }}>
               <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -229,7 +242,7 @@ function ProductModal({ product, onClose }) {
 // ========== Merchant Card ==========
 function MerchantCard({ merchant, onClick, index }) {
   const firstProduct = merchant.products[0];
-  const [imgError, setImgError] = React.useState(false);
+  const { imgSrc, imgError, handleImageError } = useProductImage(firstProduct);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
 
   return (
@@ -238,10 +251,10 @@ function MerchantCard({ merchant, onClick, index }) {
         {firstProduct && !imgError && (
           <img
             className="product-image"
-            src={`assets/images/${firstProduct.image_token}.jpg`}
+            src={imgSrc}
             alt={merchant.name}
             loading="lazy"
-            onError={() => setImgError(true)}
+            onError={handleImageError}
           />
         )}
         <div className="commission-badge">{merchant.count} 款商品</div>
