@@ -363,6 +363,55 @@
       white-space: nowrap;
     }
 
+    .product-attributes {
+      display: grid;
+      gap: 8px;
+      margin: 0 0 20px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .attribute-row {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      min-width: 0;
+    }
+
+    .attribute-label { color: var(--text-tertiary); }
+
+    .attribute-value {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+
+    .product-attributes.compact {
+      gap: 3px;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+
+    .product-attributes.compact .attribute-row {
+      display: flex;
+      gap: 4px;
+      font-size: 11px;
+      min-width: 0;
+    }
+
+    .product-attributes.compact .attribute-label { flex: none; }
+
+    .product-attributes.compact .attribute-value {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .mini-card .product-attributes.compact .attribute-row { font-size: 10px; }
+
     .product-bottom {
       display: flex;
       align-items: center;

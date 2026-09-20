@@ -122,6 +122,7 @@ function ProductCard({ product, onClick, index }) {
       <div className="product-info">
         <div className="product-name">{product.product_name}</div>
         <div className="product-shop">{product.shop}</div>
+        <ProductAttributes product={product} compact />
         <div className="product-bottom">
           <div className="product-price">{product.price}</div>
           <div className="go-btn">
@@ -129,6 +130,34 @@ function ProductCard({ product, onClick, index }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ProductAttributes({ product, compact = false }) {
+  const categories = [product.category_level_1, product.category_level_2, product.category_level_3].filter(value => value?.trim());
+  if (!categories.length && !product.colors?.trim() && !product.sizes?.trim()) return null;
+
+  return (
+    <div className={compact ? 'product-attributes compact' : 'product-attributes'}>
+      {categories.length > 0 && (
+        <div className="attribute-row">
+          <span className="attribute-label">类目</span>
+          <span className="attribute-value">{compact ? categories[categories.length - 1] : categories.join(' / ')}</span>
+        </div>
+      )}
+      {product.colors?.trim() && (
+        <div className="attribute-row">
+          <span className="attribute-label">颜色</span>
+          <span className="attribute-value">{product.colors}</span>
+        </div>
+      )}
+      {product.sizes?.trim() && (
+        <div className="attribute-row">
+          <span className="attribute-label">尺码</span>
+          <span className="attribute-value">{product.sizes}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -169,6 +198,7 @@ function MiniProductCard({ product, onClick, index }) {
       </div>
       <div className="mini-card-info">
         <div className="mini-card-name">{product.product_name}</div>
+        <ProductAttributes product={product} compact />
         <div className="mini-card-bottom">
           <div className="mini-card-price">{product.price}</div>
           {product.commission?.trim() && <div className="mini-commission">{product.commission}</div>}
@@ -214,6 +244,7 @@ function ProductModal({ product, onClose }) {
             <div className="modal-price">{product.price}</div>
             <div className="modal-price-note">售价</div>
           </div>
+          <ProductAttributes product={product} />
           {product.commission?.trim() && (
             <div className="modal-stats">
               <div className="stat-item">
