@@ -1,5 +1,47 @@
 const { useState, useEffect, useMemo, useCallback } = React;
 
+const translations = {
+  ar: {
+    title: 'منتجات السعودية', products: 'منتج', merchants: 'متجر', fromMerchants: 'من', categoryLine: 1,
+    search: 'ابحث عن منتج أو متجر...', category: 'الفئة', colors: 'الألوان', sizes: 'المقاسات',
+    price: 'السعر', viewProduct: 'عرض المنتج', productCount: 'منتجات', browse: 'تصفح المنتجات',
+    viewAll: 'عرض الكل', allMerchants: 'جميع المتاجر', default: 'الافتراضي', priceAsc: 'السعر ↑',
+    commissionHigh: 'أعلى عمولة', allCommission: 'كل العمولات', highCommission: 'عمولة عالية ≥15%',
+    mediumCommission: 'عمولة متوسطة 10-15%', lowCommission: 'عمولة منخفضة <10%',
+    home: 'الرئيسية', allProducts: 'كل المنتجات', featured: 'عمولة عالية',
+    loading: 'جار تحميل المنتجات...', retry: 'إعادة المحاولة', loadError: 'تعذر تحميل المنتجات. تحقق من assets/products.csv.',
+    emptyData: 'لا توجد منتجات. أضف بيانات إلى assets/products.csv.', noResults: 'لم يتم العثور على منتجات',
+    tryAgain: 'جرّب بحثاً أو تصفية أخرى', loadMore: 'عرض المزيد', commission: 'العمولة',
+    commissionRate: 'نسبة عمولة المنشئ', seller: 'المتجر', frenchWarning: 'لا يزال ملف CSV يحتوي على منتجات فرنسية وأسعار باليورو.'
+  },
+  en: {
+    title: 'Saudi Products', products: 'products', merchants: 'stores', fromMerchants: 'From', categoryLine: 1,
+    search: 'Search products or stores...', category: 'Category', colors: 'Colors', sizes: 'Sizes',
+    price: 'Price', viewProduct: 'View product', productCount: 'products', browse: 'Browse products',
+    viewAll: 'View all', allMerchants: 'All stores', default: 'Default', priceAsc: 'Price ↑',
+    commissionHigh: 'Top commission', allCommission: 'All commissions', highCommission: 'High ≥15%',
+    mediumCommission: 'Medium 10-15%', lowCommission: 'Low <10%',
+    home: 'Home', allProducts: 'All products', featured: 'High commission',
+    loading: 'Loading products...', retry: 'Retry', loadError: 'Could not load products. Check assets/products.csv.',
+    emptyData: 'No products yet. Add data to assets/products.csv.', noResults: 'No products found',
+    tryAgain: 'Try another search or filter', loadMore: 'Show more', commission: 'Commission',
+    commissionRate: 'Creator commission rate', seller: 'Store', frenchWarning: 'CSV still contains French products and euro prices.'
+  },
+  zh: {
+    title: '沙特选品', products: '款商品', merchants: '个商家', fromMerchants: '来自', categoryLine: 0,
+    search: '搜索商品或店铺...', category: '类目', colors: '颜色', sizes: '尺码',
+    price: '售价', viewProduct: '查看商品', productCount: '款商品', browse: '进入选品',
+    viewAll: '查看全部', allMerchants: '全部商家', default: '默认', priceAsc: '价格↑',
+    commissionHigh: '佣金最高', allCommission: '全部佣金', highCommission: '高佣 ≥15%',
+    mediumCommission: '中佣 10-15%', lowCommission: '低佣 ＜10%',
+    home: '首页', allProducts: '全部商品', featured: '高佣精选',
+    loading: '正在加载商品...', retry: '重试', loadError: '商品数据加载失败，请检查 assets/products.csv。',
+    emptyData: '暂无商品数据，请在 assets/products.csv 添加商品。', noResults: '没有找到相关商品',
+    tryAgain: '试试其他关键词或筛选条件', loadMore: '加载更多', commission: '佣金',
+    commissionRate: '创作者佣金率', seller: '所属商家', frenchWarning: '当前 CSV 仍包含法国商品与欧元价格，尚未替换为沙特商品数据。'
+  }
+};
+
 // ========== Utility Functions ==========
 function parsePrice(priceStr) {
   if (!priceStr) return 0;
@@ -101,7 +143,7 @@ const IconBack = () => (
 );
 
 // ========== Product Card ==========
-function ProductCard({ product, onClick, index }) {
+function ProductCard({ product, onClick, index, t }) {
   const { imgSrc, imgError, handleImageError } = useProductImage(product);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
 
@@ -120,9 +162,9 @@ function ProductCard({ product, onClick, index }) {
         {product.commission?.trim() && <div className="commission-badge">{product.commission}</div>}
       </div>
       <div className="product-info">
-        <div className="product-name">{product.product_name}</div>
+        <div className="product-name" dir="auto">{product.product_name}</div>
         <div className="product-shop">{product.shop}</div>
-        <ProductAttributes product={product} compact />
+        <ProductAttributes product={product} compact t={t} />
         <div className="product-bottom">
           <div className="product-price">{product.price}</div>
           <div className="go-btn">
@@ -134,28 +176,30 @@ function ProductCard({ product, onClick, index }) {
   );
 }
 
-function ProductAttributes({ product, compact = false }) {
-  const categories = [product.category_level_1, product.category_level_2, product.category_level_3].filter(value => value?.trim());
+function ProductAttributes({ product, compact = false, t }) {
+  const categories = [product.category_level_1, product.category_level_2, product.category_level_3]
+    .filter(value => value?.trim())
+    .map(value => value.split('\n')[t.categoryLine] || value.split('\n')[0]);
   if (!categories.length && !product.colors?.trim() && !product.sizes?.trim()) return null;
 
   return (
     <div className={compact ? 'product-attributes compact' : 'product-attributes'}>
       {categories.length > 0 && (
         <div className="attribute-row">
-          <span className="attribute-label">类目</span>
-          <span className="attribute-value">{compact ? categories[categories.length - 1] : categories.join(' / ')}</span>
+          <span className="attribute-label">{t.category}</span>
+          <span className="attribute-value" dir="auto">{compact ? categories[categories.length - 1] : categories.join(' / ')}</span>
         </div>
       )}
       {product.colors?.trim() && (
         <div className="attribute-row">
-          <span className="attribute-label">颜色</span>
-          <span className="attribute-value">{product.colors}</span>
+          <span className="attribute-label">{t.colors}</span>
+          <span className="attribute-value" dir="auto">{product.colors}</span>
         </div>
       )}
       {product.sizes?.trim() && (
         <div className="attribute-row">
-          <span className="attribute-label">尺码</span>
-          <span className="attribute-value">{product.sizes}</span>
+          <span className="attribute-label">{t.sizes}</span>
+          <span className="attribute-value" dir="auto">{product.sizes}</span>
         </div>
       )}
     </div>
@@ -163,7 +207,7 @@ function ProductAttributes({ product, compact = false }) {
 }
 
 // ========== Mini Product Card ==========
-function MiniProductCard({ product, onClick, index }) {
+function MiniProductCard({ product, onClick, index, t }) {
   const { imgSrc, imgError, handleImageError } = useProductImage(product);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
 
@@ -197,8 +241,8 @@ function MiniProductCard({ product, onClick, index }) {
         )}
       </div>
       <div className="mini-card-info">
-        <div className="mini-card-name">{product.product_name}</div>
-        <ProductAttributes product={product} compact />
+        <div className="mini-card-name" dir="auto">{product.product_name}</div>
+        <ProductAttributes product={product} compact t={t} />
         <div className="mini-card-bottom">
           <div className="mini-card-price">{product.price}</div>
           {product.commission?.trim() && <div className="mini-commission">{product.commission}</div>}
@@ -209,7 +253,7 @@ function MiniProductCard({ product, onClick, index }) {
 }
 
 // ========== Product Detail Modal ==========
-function ProductModal({ product, onClose }) {
+function ProductModal({ product, onClose, t }) {
   const { imgSrc, imgError, handleImageError } = useProductImage(product);
   if (!product) return null;
 
@@ -232,27 +276,27 @@ function ProductModal({ product, onClose }) {
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
           )}
-          <button className="modal-close" onClick={onClose}>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
             <IconClose />
           </button>
-          {product.commission?.trim() && <div className="modal-commission">佣金 {product.commission}</div>}
+          {product.commission?.trim() && <div className="modal-commission">{t.commission} {product.commission}</div>}
         </div>
         <div className="modal-body">
           <div className="modal-shop">{product.shop}</div>
-          <div className="modal-name">{product.product_name}</div>
+          <div className="modal-name" dir="auto">{product.product_name}</div>
           <div className="modal-price-row">
             <div className="modal-price">{product.price}</div>
-            <div className="modal-price-note">售价</div>
+            <div className="modal-price-note">{t.price}</div>
           </div>
-          <ProductAttributes product={product} />
+          <ProductAttributes product={product} t={t} />
           {product.commission?.trim() && (
             <div className="modal-stats">
               <div className="stat-item">
-                <div className="stat-label">创作者佣金率</div>
+                <div className="stat-label">{t.commissionRate}</div>
                 <div className="stat-value commission-stat">{product.commission}</div>
               </div>
               <div className="stat-item">
-                <div className="stat-label">所属商家</div>
+                <div className="stat-label">{t.seller}</div>
                 <div className="stat-value" style={{ fontSize: '13px' }}>{product.shop}</div>
               </div>
             </div>
@@ -264,7 +308,7 @@ function ProductModal({ product, onClose }) {
             rel="noopener noreferrer"
           >
             <IconExternal />
-            查看商品
+            {t.viewProduct}
           </a>
         </div>
       </div>
@@ -273,7 +317,7 @@ function ProductModal({ product, onClose }) {
 }
 
 // ========== Merchant Card ==========
-function MerchantCard({ merchant, onClick, index }) {
+function MerchantCard({ merchant, onClick, index, t }) {
   const firstProduct = merchant.products[0];
   const { imgSrc, imgError, handleImageError } = useProductImage(firstProduct);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
@@ -290,7 +334,7 @@ function MerchantCard({ merchant, onClick, index }) {
             onError={handleImageError}
           />
         )}
-        <div className="commission-badge">{merchant.count} 款商品</div>
+        <div className="commission-badge">{merchant.count} {t.productCount}</div>
       </div>
       <div className="product-info">
         <div className="product-name" style={{ fontWeight: '600' }}>
@@ -301,7 +345,7 @@ function MerchantCard({ merchant, onClick, index }) {
         </div>
         <div className="product-bottom">
           <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-            进入选品
+            {t.browse}
           </div>
           <div className="go-btn">
             <IconArrowRight />
@@ -314,6 +358,11 @@ function MerchantCard({ merchant, onClick, index }) {
 
 // ========== Main App ==========
 function App() {
+  const [locale, setLocale] = useState(() => {
+    const saved = localStorage.getItem('site-language');
+    return translations[saved] ? saved : 'ar';
+  });
+  const t = translations[locale];
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -324,6 +373,17 @@ function App() {
   const [sortBy, setSortBy] = useState('default'); // 'default' | 'price-asc' | 'price-desc' | 'commission-desc'
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [commissionFilter, setCommissionFilter] = useState('all'); // 'all' | 'high' | 'medium' | 'low'
+  const [visibleProducts, setVisibleProducts] = useState(48);
+  const [visibleMerchants, setVisibleMerchants] = useState(24);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+    document.title = `SA | ${t.title}`;
+    localStorage.setItem('site-language', locale);
+  }, [locale]);
+
+  useEffect(() => { setVisibleProducts(48); }, [viewMode, selectedMerchant, searchQuery, sortBy, commissionFilter]);
 
   const loadProducts = useCallback(() => {
     setLoading(true);
@@ -336,7 +396,7 @@ function App() {
       .then(csv => setProducts(parseProductsCsv(csv)))
       .catch(error => {
         console.error('Failed to load products:', error);
-        setLoadError(error.message.startsWith('CSV') ? error.message : '商品数据加载失败，请检查 assets/products.csv。');
+        setLoadError('load');
       })
       .finally(() => setLoading(false));
   }, []);
@@ -416,24 +476,29 @@ function App() {
     setSelectedMerchant(merchantName);
     setViewMode('merchantDetail');
     setActiveTab('products');
+    window.scrollTo(0, 0);
   }, []);
 
   const handleBackToExplore = useCallback(() => {
     setSelectedMerchant(null);
     setViewMode('explore');
     setActiveTab('all');
+    setVisibleMerchants(24);
+    window.scrollTo(0, 0);
   }, []);
 
   const handleViewAllProducts = useCallback(() => {
     setSelectedMerchant(null);
     setCommissionFilter('all');
     setViewMode('allProducts');
+    window.scrollTo(0, 0);
   }, []);
 
   const handleViewHighCommission = useCallback(() => {
     setSelectedMerchant(null);
     setCommissionFilter('high');
     setViewMode('allProducts');
+    window.scrollTo(0, 0);
   }, []);
 
   const handleClearSearch = useCallback(() => {
@@ -446,7 +511,7 @@ function App() {
       <div className="app">
         <div className="loading">
           <div className="loading-spinner"></div>
-          正在加载商品...
+          {t.loading}
         </div>
       </div>
     );
@@ -455,10 +520,10 @@ function App() {
   if (loadError) {
     return (
       <div className="app">
-        <div className="header"><div className="header-title">SA 沙特选品</div></div>
+        <div className="header"><div className="header-title">SA {t.title}</div></div>
         <div className="empty-state" role="alert">
-          <div className="empty-title">{loadError}</div>
-          <button className="sort-btn" onClick={loadProducts}>重试</button>
+          <div className="empty-title">{loadError === 'load' ? t.loadError : loadError}</div>
+          <button className="sort-btn" onClick={loadProducts}>{t.retry}</button>
         </div>
       </div>
     );
@@ -467,8 +532,8 @@ function App() {
   if (products.length === 0) {
     return (
       <div className="app">
-        <div className="header"><div className="header-title">SA 沙特选品</div></div>
-        <div className="empty-state">暂无商品数据，请在 assets/products.csv 添加商品。</div>
+        <div className="header"><div className="header-title">SA {t.title}</div></div>
+        <div className="empty-state">{t.emptyData}</div>
       </div>
     );
   }
@@ -480,7 +545,7 @@ function App() {
         <div className="header-top">
           {viewMode === 'merchantDetail' ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <button className="back-btn" onClick={handleBackToExplore}>
+              <button className="back-btn" onClick={handleBackToExplore} aria-label={t.home}>
                 <IconBack />
               </button>
               <div style={{
@@ -495,10 +560,17 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="header-title">SA 沙特选品</div>
+            <div className="header-title">SA {t.title}</div>
           )}
-          <div className="header-stats">
-            共 <strong>{filteredProducts.length}</strong> 款商品
+          <div className="header-actions">
+            <select className="language-select" aria-label="Language" value={locale} onChange={event => setLocale(event.target.value)}>
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+              <option value="zh">中文</option>
+            </select>
+            <div className="header-stats">
+              <strong>{filteredProducts.length}</strong> {t.products}
+            </div>
           </div>
         </div>
 
@@ -508,7 +580,7 @@ function App() {
           <input
             className="search-input"
             type="text"
-            placeholder="搜索商品或店铺..."
+            placeholder={t.search}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -527,7 +599,7 @@ function App() {
 
       {hasFrenchData && (
         <div className="data-notice" role="status">
-          当前 CSV 仍包含法国商品与欧元价格，尚未替换为沙特商品数据。
+          {t.frenchWarning}
         </div>
       )}
 
@@ -538,25 +610,25 @@ function App() {
             className={`filter-chip ${commissionFilter === 'all' ? 'active' : ''}`}
             onClick={() => setCommissionFilter('all')}
           >
-            全部佣金
+            {t.allCommission}
           </div>
           <div
             className={`filter-chip ${commissionFilter === 'high' ? 'active' : ''}`}
             onClick={() => setCommissionFilter('high')}
           >
-            高佣 ≥15%
+            {t.highCommission}
           </div>
           <div
             className={`filter-chip ${commissionFilter === 'medium' ? 'active' : ''}`}
             onClick={() => setCommissionFilter('medium')}
           >
-            中佣 10-15%
+            {t.mediumCommission}
           </div>
           <div
             className={`filter-chip ${commissionFilter === 'low' ? 'active' : ''}`}
             onClick={() => setCommissionFilter('low')}
           >
-            低佣 ＜10%
+            {t.lowCommission}
           </div>
         </div>
       )}
@@ -565,31 +637,31 @@ function App() {
       <div className="sort-bar">
         <span className="sort-label">
           {viewMode === 'merchantDetail'
-            ? `${filteredProducts.length} 款商品`
+            ? `${filteredProducts.length} ${t.products}`
             : viewMode === 'allProducts'
-            ? `${filteredProducts.length} 款商品`
-            : `来自 ${merchants.length} 个商家`}
+            ? `${filteredProducts.length} ${t.products}`
+            : `${t.fromMerchants} ${merchants.length} ${t.merchants}`}
         </span>
         <div className="sort-options">
           <button
             className={`sort-btn ${sortBy === 'default' ? 'active' : ''}`}
             onClick={() => setSortBy('default')}
           >
-            默认
+            {t.default}
           </button>
           {hasCommission && (
             <button
               className={`sort-btn ${sortBy === 'commission-desc' ? 'active' : ''}`}
               onClick={() => setSortBy('commission-desc')}
             >
-              佣金最高
+              {t.commissionHigh}
             </button>
           )}
           <button
             className={`sort-btn ${sortBy === 'price-asc' ? 'active' : ''}`}
             onClick={() => setSortBy('price-asc')}
           >
-            价格↑
+            {t.priceAsc}
           </button>
         </div>
       </div>
@@ -604,14 +676,14 @@ function App() {
                 <div className="merchant-header">
                   <div className="merchant-name">
                     {merchant.name}
-                    <span className="merchant-count">{merchant.count}款</span>
+                    <span className="merchant-count">{merchant.count} {t.productCount}</span>
                   </div>
                   <button
                     className="sort-btn"
                     style={{ color: 'var(--accent)', fontSize: '12px', fontWeight: '600' }}
                     onClick={() => handleMerchantClick(merchant.name)}
                   >
-                    查看全部 →
+                    {t.viewAll} <IconArrowRight />
                   </button>
                 </div>
                 <div className="merchant-scroll">
@@ -621,6 +693,7 @@ function App() {
                       product={product}
                       onClick={() => handleProductClick(product)}
                       index={idx * 6 + pIdx}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -632,18 +705,22 @@ function App() {
           <div className="products-section" style={{ paddingTop: '8px' }}>
             <div className="section-title">
               <span className="section-title-dot"></span>
-              全部商家 ({merchants.length})
+              {t.allMerchants} ({merchants.length})
             </div>
             <div className="products-grid">
-              {merchants.map((merchant, idx) => (
+              {merchants.slice(0, visibleMerchants).map((merchant, idx) => (
                 <MerchantCard
                   key={merchant.name}
                   merchant={merchant}
                   onClick={() => handleMerchantClick(merchant.name)}
                   index={idx}
+                  t={t}
                 />
               ))}
             </div>
+            {visibleMerchants < merchants.length && (
+              <button className="load-more" onClick={() => setVisibleMerchants(count => count + 24)}>{t.loadMore}</button>
+            )}
           </div>
         </>
       ) : viewMode === 'allProducts' ? (
@@ -652,20 +729,24 @@ function App() {
           {filteredProducts.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🔍</div>
-              <div className="empty-title">没有找到相关商品</div>
-              <div className="empty-desc">试试其他关键词或筛选条件</div>
+              <div className="empty-title">{t.noResults}</div>
+              <div className="empty-desc">{t.tryAgain}</div>
             </div>
           ) : (
             <div className="products-grid">
-              {filteredProducts.map((product, idx) => (
+              {filteredProducts.slice(0, visibleProducts).map((product, idx) => (
                 <ProductCard
                   key={product.row}
                   product={product}
                   onClick={() => handleProductClick(product)}
                   index={idx}
+                  t={t}
                 />
               ))}
             </div>
+          )}
+          {visibleProducts < filteredProducts.length && (
+            <button className="load-more" onClick={() => setVisibleProducts(count => count + 48)}>{t.loadMore}</button>
           )}
         </div>
       ) : (
@@ -674,20 +755,24 @@ function App() {
           {filteredProducts.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🔍</div>
-              <div className="empty-title">没有找到相关商品</div>
-              <div className="empty-desc">试试其他关键词或筛选条件</div>
+              <div className="empty-title">{t.noResults}</div>
+              <div className="empty-desc">{t.tryAgain}</div>
             </div>
           ) : (
             <div className="products-grid">
-              {filteredProducts.map((product, idx) => (
+              {filteredProducts.slice(0, visibleProducts).map((product, idx) => (
                 <ProductCard
                   key={product.row}
                   product={product}
                   onClick={() => handleProductClick(product)}
                   index={idx}
+                  t={t}
                 />
               ))}
             </div>
+          )}
+          {visibleProducts < filteredProducts.length && (
+            <button className="load-more" onClick={() => setVisibleProducts(count => count + 48)}>{t.loadMore}</button>
           )}
         </div>
       )}
@@ -699,14 +784,14 @@ function App() {
           onClick={handleBackToExplore}
         >
           <IconHome active={viewMode === 'explore'} />
-          <span className="nav-label">首页</span>
+          <span className="nav-label">{t.home}</span>
         </div>
         <div
           className={`nav-item ${viewMode === 'allProducts' && commissionFilter === 'all' ? 'active' : ''}`}
           onClick={handleViewAllProducts}
         >
           <IconGrid active={viewMode === 'allProducts' && commissionFilter === 'all'} />
-          <span className="nav-label">全部商品</span>
+          <span className="nav-label">{t.allProducts}</span>
         </div>
         {hasCommission && (
           <div
@@ -714,14 +799,14 @@ function App() {
             onClick={handleViewHighCommission}
           >
             <IconCommission active={viewMode === 'allProducts' && commissionFilter === 'high'} />
-            <span className="nav-label">高佣精选</span>
+            <span className="nav-label">{t.featured}</span>
           </div>
         )}
       </div>
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+        <ProductModal product={selectedProduct} onClose={handleCloseModal} t={t} />
       )}
     </div>
   );

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="creative-medium" content="interactive-prototype" />
-  <title>SA 沙特招商选品</title>
+  <title>SA | منتجات السعودية</title>
   <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Poppins:wght@500;600;700;800&display=swap" />
   <style>
     :root {
@@ -74,11 +74,29 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
+      gap: 8px;
     }
+
+    .header-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; }
+
+    .language-select {
+      max-width: 92px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 2px;
+      font: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .header-title { min-width: 0; }
+    .header-stats { white-space: nowrap; }
 
     .header-title {
       font-family: 'Poppins', 'Noto Sans SC', sans-serif;
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.5px;
       background: linear-gradient(135deg, var(--accent) 0%, #FF8A5B 100%);
@@ -97,6 +115,8 @@
       color: var(--accent);
       font-weight: 700;
     }
+
+    html[lang="ar"] body { font-family: Tahoma, Arial, sans-serif; }
 
     /* Search */
     .search-box {
@@ -373,7 +393,7 @@
 
     .attribute-row {
       display: grid;
-      grid-template-columns: 36px minmax(0, 1fr);
+      grid-template-columns: 68px minmax(0, 1fr);
       gap: 8px;
       font-size: 12px;
       line-height: 1.5;
@@ -403,6 +423,8 @@
     }
 
     .product-attributes.compact .attribute-label { flex: none; }
+
+    .product-attributes.compact .attribute-label { max-width: 42%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .product-attributes.compact .attribute-value {
       overflow: hidden;
@@ -602,6 +624,22 @@
       font-size: 10px;
       font-weight: 500;
     }
+
+    .load-more {
+      display: block;
+      width: 100%;
+      margin: 20px 0 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    [dir="rtl"] .back-btn svg { transform: rotate(180deg); }
 
     /* Loading State */
     .loading {
