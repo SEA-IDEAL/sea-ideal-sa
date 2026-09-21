@@ -170,6 +170,39 @@
       flex-shrink: 0;
     }
 
+    .category-filter {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 16px 8px;
+      scrollbar-width: none;
+    }
+
+    .category-filter::-webkit-scrollbar { display: none; }
+
+    .category-filter select {
+      flex: 0 0 190px;
+      min-width: 0;
+      padding: 9px 28px 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .category-filter select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .category-filter select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     /* Category Tabs */
     .category-tabs {
       display: flex;
@@ -379,6 +412,25 @@
       color: var(--text-tertiary);
       font-weight: 400;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .product-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      color: var(--text-tertiary);
+      font-size: 10px;
+    }
+
+    .product-row strong {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -606,7 +658,9 @@
       align-items: center;
       gap: 3px;
       cursor: pointer;
-      padding: 6px 16px;
+      flex: 1;
+      min-width: 0;
+      padding: 6px 8px;
       color: var(--text-tertiary);
       transition: color 0.2s ease;
     }
@@ -620,10 +674,45 @@
       height: 22px;
     }
 
+    .nav-icon-wrap { position: relative; display: flex; }
+
+    .nav-badge {
+      position: absolute;
+      top: -7px;
+      right: -12px;
+      min-width: 17px;
+      height: 17px;
+      padding: 0 4px;
+      border: 2px solid #fff;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 13px;
+      text-align: center;
+    }
+
+    [dir="rtl"] .nav-badge { right: auto; left: -12px; }
+
     .nav-label {
       font-size: 10px;
       font-weight: 500;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+
+    .pool-empty-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .pool-empty-icon .nav-icon { width: 42px; height: 42px; }
 
     .load-more {
       display: block;
@@ -751,6 +840,7 @@
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
       max-height: 85vh;
       overflow-y: auto;
+      overflow-x: hidden;
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -834,14 +924,17 @@
       align-items: baseline;
       gap: 12px;
       margin-bottom: 20px;
+      min-width: 0;
     }
 
     .modal-price {
+      min-width: 0;
       font-family: 'Poppins', sans-serif;
       font-size: 28px;
       font-weight: 800;
       color: var(--accent);
       letter-spacing: -0.5px;
+      overflow-wrap: anywhere;
     }
 
     .modal-price-note {
@@ -879,9 +972,17 @@
       color: var(--commission);
     }
 
-    .modal-cta {
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal-cta,
+    .pool-toggle {
       width: 100%;
-      padding: 16px;
+      min-height: 52px;
+      padding: 12px 10px;
       background: linear-gradient(135deg, var(--accent) 0%, #FF8A5B 100%);
       color: #fff;
       border: none;
@@ -896,9 +997,23 @@
       box-shadow: 0 4px 16px rgba(255, 77, 109, 0.3);
       transition: all 0.2s ease;
       text-decoration: none;
+      text-align: center;
     }
 
-    .modal-cta:active {
+    .pool-toggle {
+      background: var(--bg-card);
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      box-shadow: none;
+    }
+
+    .pool-toggle.selected {
+      background: var(--accent-light);
+      color: var(--accent-dark);
+    }
+
+    .modal-cta:active,
+    .pool-toggle:active {
       transform: scale(0.98);
       box-shadow: 0 2px 8px rgba(255, 77, 109, 0.25);
     }
@@ -989,6 +1104,6 @@
     });
   </script>
 
-  <script type="text/babel" data-presets="react-classic" src="app.jsx?v=20260920-i18n"></script>
+  <script type="text/babel" data-presets="react-classic" src="app.jsx?v=20260921-pool"></script>
 </body>
 </html>

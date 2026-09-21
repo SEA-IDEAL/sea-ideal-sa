@@ -12,7 +12,10 @@ const translations = {
     loading: 'جار تحميل المنتجات...', retry: 'إعادة المحاولة', loadError: 'تعذر تحميل المنتجات. تحقق من assets/products.csv.',
     emptyData: 'لا توجد منتجات. أضف بيانات إلى assets/products.csv.', noResults: 'لم يتم العثور على منتجات',
     tryAgain: 'جرّب بحثاً أو تصفية أخرى', loadMore: 'عرض المزيد', commission: 'العمولة',
-    commissionRate: 'نسبة عمولة المنشئ', seller: 'المتجر', frenchWarning: 'لا يزال ملف CSV يحتوي على منتجات فرنسية وأسعار باليورو.'
+    commissionRate: 'نسبة عمولة المنشئ', seller: 'المتجر', frenchWarning: 'لا يزال ملف CSV يحتوي على منتجات فرنسية وأسعار باليورو.',
+    pool: 'قائمة الاختيار', addToPool: 'أضف للقائمة', removeFromPool: 'إزالة من القائمة', row: 'الرمز',
+    poolEmpty: 'قائمة الاختيار فارغة', poolEmptyDesc: 'أضف المنتجات من صفحة التفاصيل.',
+    allCategories: 'كل الفئات', level1: 'الفئة الرئيسية', level2: 'الفئة الفرعية', level3: 'الفئة التفصيلية'
   },
   en: {
     title: 'Saudi Products', products: 'products', merchants: 'stores', fromMerchants: 'From', categoryLine: 1,
@@ -25,7 +28,10 @@ const translations = {
     loading: 'Loading products...', retry: 'Retry', loadError: 'Could not load products. Check assets/products.csv.',
     emptyData: 'No products yet. Add data to assets/products.csv.', noResults: 'No products found',
     tryAgain: 'Try another search or filter', loadMore: 'Show more', commission: 'Commission',
-    commissionRate: 'Creator commission rate', seller: 'Store', frenchWarning: 'CSV still contains French products and euro prices.'
+    commissionRate: 'Creator commission rate', seller: 'Store', frenchWarning: 'CSV still contains French products and euro prices.',
+    pool: 'Selection pool', addToPool: 'Add to pool', removeFromPool: 'Remove from pool', row: 'Row',
+    poolEmpty: 'Your selection pool is empty', poolEmptyDesc: 'Add products from the product details.',
+    allCategories: 'All categories', level1: 'Level 1 category', level2: 'Level 2 category', level3: 'Level 3 category'
   },
   zh: {
     title: '沙特选品', products: '款商品', merchants: '个商家', fromMerchants: '来自', categoryLine: 0,
@@ -38,7 +44,10 @@ const translations = {
     loading: '正在加载商品...', retry: '重试', loadError: '商品数据加载失败，请检查 assets/products.csv。',
     emptyData: '暂无商品数据，请在 assets/products.csv 添加商品。', noResults: '没有找到相关商品',
     tryAgain: '试试其他关键词或筛选条件', loadMore: '加载更多', commission: '佣金',
-    commissionRate: '创作者佣金率', seller: '所属商家', frenchWarning: '当前 CSV 仍包含法国商品与欧元价格，尚未替换为沙特商品数据。'
+    commissionRate: '创作者佣金率', seller: '所属商家', frenchWarning: '当前 CSV 仍包含法国商品与欧元价格，尚未替换为沙特商品数据。',
+    pool: '选品池', addToPool: '加入选品池', removeFromPool: '移出选品池', row: 'Row',
+    poolEmpty: '选品池还是空的', poolEmptyDesc: '可在商品详情中加入商品。',
+    allCategories: '全部类目', level1: '一级类目', level2: '二级类目', level3: '三级类目'
   }
 };
 
@@ -55,6 +64,12 @@ function parseCommission(commStr) {
   if (!commStr) return 0;
   const match = commStr.match(/[\d.]+/);
   return match ? parseFloat(match[0]) : 0;
+}
+
+function localizedCategory(value, t) {
+  if (!value) return '';
+  const lines = value.split('\n');
+  return lines[t.categoryLine] || lines[0];
 }
 
 function useProductImage(product) {
@@ -142,8 +157,28 @@ const IconBack = () => (
   </svg>
 );
 
+const IconPool = ({ active }) => (
+  <svg className="nav-icon" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 7V5a6 6 0 0 1 12 0v2"></path>
+    <path d="M3 7h18l-1 14H4L3 7z"></path>
+  </svg>
+);
+
+const IconPlus = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
+
 // ========== Product Card ==========
-function ProductCard({ product, onClick, index, t }) {
+function ProductCard({ product, onClick, index, t, showRow = false }) {
   const { imgSrc, imgError, handleImageError } = useProductImage(product);
   const style = { animationDelay: `${Math.min(index * 0.03, 0.6)}s` };
 
@@ -164,6 +199,7 @@ function ProductCard({ product, onClick, index, t }) {
       <div className="product-info">
         <div className="product-name" dir="auto">{product.product_name}</div>
         <div className="product-shop">{product.shop}</div>
+        {showRow && <div className="product-row"><span>{t.row}</span> <strong>{product.row}</strong></div>}
         <ProductAttributes product={product} compact t={t} />
         <div className="product-bottom">
           <div className="product-price">{product.price}</div>
@@ -179,7 +215,7 @@ function ProductCard({ product, onClick, index, t }) {
 function ProductAttributes({ product, compact = false, t }) {
   const categories = [product.category_level_1, product.category_level_2, product.category_level_3]
     .filter(value => value?.trim())
-    .map(value => value.split('\n')[t.categoryLine] || value.split('\n')[0]);
+    .map(value => localizedCategory(value, t));
   if (!categories.length && !product.colors?.trim() && !product.sizes?.trim()) return null;
 
   return (
@@ -253,7 +289,7 @@ function MiniProductCard({ product, onClick, index, t }) {
 }
 
 // ========== Product Detail Modal ==========
-function ProductModal({ product, onClose, t }) {
+function ProductModal({ product, onClose, t, inPool, onTogglePool }) {
   const { imgSrc, imgError, handleImageError } = useProductImage(product);
   if (!product) return null;
 
@@ -301,15 +337,21 @@ function ProductModal({ product, onClose, t }) {
               </div>
             </div>
           )}
-          <a
-            className="modal-cta"
-            href={product.link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <IconExternal />
-            {t.viewProduct}
-          </a>
+          <div className="modal-actions">
+            <a
+              className="modal-cta"
+              href={product.link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconExternal />
+              {t.viewProduct}
+            </a>
+            <button className={`pool-toggle ${inPool ? 'selected' : ''}`} onClick={() => onTogglePool(product.row)}>
+              {inPool ? <IconCheck /> : <IconPlus />}
+              {inPool ? t.removeFromPool : t.addToPool}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -368,13 +410,24 @@ function App() {
   const [loadError, setLoadError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'merchants' | 'products'
-  const [viewMode, setViewMode] = useState('explore'); // 'explore' | 'allProducts' | 'merchantDetail'
+  const [viewMode, setViewMode] = useState('explore'); // 'explore' | 'allProducts' | 'merchantDetail' | 'pool'
   const [selectedMerchant, setSelectedMerchant] = useState(null);
   const [sortBy, setSortBy] = useState('default'); // 'default' | 'price-asc' | 'price-desc' | 'commission-desc'
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [commissionFilter, setCommissionFilter] = useState('all'); // 'all' | 'high' | 'medium' | 'low'
   const [visibleProducts, setVisibleProducts] = useState(48);
   const [visibleMerchants, setVisibleMerchants] = useState(24);
+  const [categoryLevel1, setCategoryLevel1] = useState('');
+  const [categoryLevel2, setCategoryLevel2] = useState('');
+  const [categoryLevel3, setCategoryLevel3] = useState('');
+  const [poolRows, setPoolRows] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('selection-pool') || '[]');
+      return Array.isArray(saved) ? saved.filter(row => typeof row === 'string') : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -383,7 +436,17 @@ function App() {
     localStorage.setItem('site-language', locale);
   }, [locale]);
 
-  useEffect(() => { setVisibleProducts(48); }, [viewMode, selectedMerchant, searchQuery, sortBy, commissionFilter]);
+  useEffect(() => { setVisibleProducts(48); }, [viewMode, selectedMerchant, searchQuery, sortBy, commissionFilter, categoryLevel1, categoryLevel2, categoryLevel3]);
+
+  useEffect(() => {
+    localStorage.setItem('selection-pool', JSON.stringify(poolRows));
+  }, [poolRows]);
+
+  useEffect(() => {
+    if (!products.length) return;
+    const availableRows = new Set(products.map(product => product.row));
+    setPoolRows(current => current.filter(row => availableRows.has(row)));
+  }, [products]);
 
   const loadProducts = useCallback(() => {
     setLoading(true);
@@ -421,6 +484,16 @@ function App() {
     return Object.values(map).sort((a, b) => b.count - a.count);
   }, [products]);
 
+  const categoryOptions = useMemo(() => {
+    const unique = values => [...new Set(values.filter(Boolean))].sort((a, b) => localizedCategory(a, t).localeCompare(localizedCategory(b, t)));
+    const level1 = unique(products.map(product => product.category_level_1));
+    const level2Products = categoryLevel1 ? products.filter(product => product.category_level_1 === categoryLevel1) : products;
+    const level2 = unique(level2Products.map(product => product.category_level_2));
+    const level3Products = level2Products.filter(product => !categoryLevel2 || product.category_level_2 === categoryLevel2);
+    const level3 = unique(level3Products.map(product => product.category_level_3));
+    return { level1, level2, level3 };
+  }, [products, categoryLevel1, categoryLevel2, locale]);
+
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let result = [...products];
@@ -431,7 +504,10 @@ function App() {
       result = result.filter(p =>
         p.product_name.toLowerCase().includes(q) ||
         p.shop.toLowerCase().includes(q) ||
-        p.sheet_name.toLowerCase().includes(q)
+        p.sheet_name.toLowerCase().includes(q) ||
+        p.category_level_1?.toLowerCase().includes(q) ||
+        p.category_level_2?.toLowerCase().includes(q) ||
+        p.category_level_3?.toLowerCase().includes(q)
       );
     }
 
@@ -439,6 +515,10 @@ function App() {
     if (selectedMerchant) {
       result = result.filter(p => p.sheet_name === selectedMerchant);
     }
+
+    if (categoryLevel1) result = result.filter(p => p.category_level_1 === categoryLevel1);
+    if (categoryLevel2) result = result.filter(p => p.category_level_2 === categoryLevel2);
+    if (categoryLevel3) result = result.filter(p => p.category_level_3 === categoryLevel3);
 
     // Commission filter
     if (commissionFilter !== 'all') {
@@ -462,7 +542,16 @@ function App() {
     }
 
     return result;
-  }, [products, searchQuery, selectedMerchant, sortBy, commissionFilter]);
+  }, [products, searchQuery, selectedMerchant, sortBy, commissionFilter, categoryLevel1, categoryLevel2, categoryLevel3]);
+
+  const poolProducts = useMemo(() => {
+    const selected = new Set(poolRows);
+    return filteredProducts.filter(product => selected.has(product.row));
+  }, [filteredProducts, poolRows]);
+
+  const togglePool = useCallback((row) => {
+    setPoolRows(current => current.includes(row) ? current.filter(item => item !== row) : [...current, row]);
+  }, []);
 
   const handleProductClick = useCallback((product) => {
     setSelectedProduct(product);
@@ -481,6 +570,12 @@ function App() {
 
   const handleBackToExplore = useCallback(() => {
     setSelectedMerchant(null);
+    setSearchQuery('');
+    setCategoryLevel1('');
+    setCategoryLevel2('');
+    setCategoryLevel3('');
+    setCommissionFilter('all');
+    setSortBy('default');
     setViewMode('explore');
     setActiveTab('all');
     setVisibleMerchants(24);
@@ -501,9 +596,32 @@ function App() {
     window.scrollTo(0, 0);
   }, []);
 
+  const handleViewPool = useCallback(() => {
+    setSelectedMerchant(null);
+    setCommissionFilter('all');
+    setViewMode('pool');
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleCategoryChange = useCallback((level, value) => {
+    if (level === 1) {
+      setCategoryLevel1(value);
+      setCategoryLevel2('');
+      setCategoryLevel3('');
+    } else if (level === 2) {
+      setCategoryLevel2(value);
+      setCategoryLevel3('');
+    } else {
+      setCategoryLevel3(value);
+    }
+    if (viewMode === 'explore') setViewMode('allProducts');
+  }, [viewMode]);
+
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
   }, []);
+
+  const displayedCount = viewMode === 'pool' ? poolProducts.length : filteredProducts.length;
 
   // Loading state
   if (loading) {
@@ -569,7 +687,7 @@ function App() {
               <option value="zh">中文</option>
             </select>
             <div className="header-stats">
-              <strong>{filteredProducts.length}</strong> {t.products}
+              <strong>{displayedCount}</strong> {t.products}
             </div>
           </div>
         </div>
@@ -584,7 +702,7 @@ function App() {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              if (e.target.value && viewMode !== 'allProducts' && viewMode !== 'merchantDetail') {
+              if (e.target.value && viewMode !== 'allProducts' && viewMode !== 'merchantDetail' && viewMode !== 'pool') {
                 setViewMode('allProducts');
               }
             }}
@@ -602,6 +720,21 @@ function App() {
           {t.frenchWarning}
         </div>
       )}
+
+      <div className="category-filter" aria-label={t.category}>
+        <select aria-label={t.level1} value={categoryLevel1} onChange={event => handleCategoryChange(1, event.target.value)}>
+          <option value="">{t.level1}: {t.allCategories}</option>
+          {categoryOptions.level1.map(value => <option key={value} value={value}>{localizedCategory(value, t)}</option>)}
+        </select>
+        <select aria-label={t.level2} value={categoryLevel2} onChange={event => handleCategoryChange(2, event.target.value)} disabled={!categoryLevel1}>
+          <option value="">{t.level2}: {t.allCategories}</option>
+          {categoryOptions.level2.map(value => <option key={value} value={value}>{localizedCategory(value, t)}</option>)}
+        </select>
+        <select aria-label={t.level3} value={categoryLevel3} onChange={event => handleCategoryChange(3, event.target.value)} disabled={!categoryLevel2}>
+          <option value="">{t.level3}: {t.allCategories}</option>
+          {categoryOptions.level3.map(value => <option key={value} value={value}>{localizedCategory(value, t)}</option>)}
+        </select>
+      </div>
 
       {/* Commission Filter Chips */}
       {hasCommission && viewMode !== 'merchantDetail' && (
@@ -638,6 +771,8 @@ function App() {
         <span className="sort-label">
           {viewMode === 'merchantDetail'
             ? `${filteredProducts.length} ${t.products}`
+            : viewMode === 'pool'
+            ? `${poolProducts.length} ${t.products}`
             : viewMode === 'allProducts'
             ? `${filteredProducts.length} ${t.products}`
             : `${t.fromMerchants} ${merchants.length} ${t.merchants}`}
@@ -749,6 +884,32 @@ function App() {
             <button className="load-more" onClick={() => setVisibleProducts(count => count + 48)}>{t.loadMore}</button>
           )}
         </div>
+      ) : viewMode === 'pool' ? (
+        <div className="products-section pool-section">
+          {poolProducts.length === 0 ? (
+            <div className="empty-state">
+              <div className="pool-empty-icon"><IconPool active /></div>
+              <div className="empty-title">{poolRows.length === 0 ? t.poolEmpty : t.noResults}</div>
+              <div className="empty-desc">{poolRows.length === 0 ? t.poolEmptyDesc : t.tryAgain}</div>
+            </div>
+          ) : (
+            <div className="products-grid">
+              {poolProducts.slice(0, visibleProducts).map((product, idx) => (
+                <ProductCard
+                  key={product.row}
+                  product={product}
+                  onClick={() => handleProductClick(product)}
+                  index={idx}
+                  t={t}
+                  showRow
+                />
+              ))}
+            </div>
+          )}
+          {visibleProducts < poolProducts.length && (
+            <button className="load-more" onClick={() => setVisibleProducts(count => count + 48)}>{t.loadMore}</button>
+          )}
+        </div>
       ) : (
         // Merchant detail view - product grid
         <div className="products-section">
@@ -793,6 +954,16 @@ function App() {
           <IconGrid active={viewMode === 'allProducts' && commissionFilter === 'all'} />
           <span className="nav-label">{t.allProducts}</span>
         </div>
+        <div
+          className={`nav-item ${viewMode === 'pool' ? 'active' : ''}`}
+          onClick={handleViewPool}
+        >
+          <span className="nav-icon-wrap">
+            <IconPool active={viewMode === 'pool'} />
+            {poolRows.length > 0 && <span className="nav-badge">{poolRows.length > 99 ? '99+' : poolRows.length}</span>}
+          </span>
+          <span className="nav-label">{t.pool}</span>
+        </div>
         {hasCommission && (
           <div
             className={`nav-item ${viewMode === 'allProducts' && commissionFilter === 'high' ? 'active' : ''}`}
@@ -806,7 +977,13 @@ function App() {
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={handleCloseModal} t={t} />
+        <ProductModal
+          product={selectedProduct}
+          onClose={handleCloseModal}
+          t={t}
+          inPool={poolRows.includes(selectedProduct.row)}
+          onTogglePool={togglePool}
+        />
       )}
     </div>
   );
