@@ -15,7 +15,7 @@ const translations = {
     commissionRate: 'نسبة عمولة المنشئ', seller: 'المتجر', frenchWarning: 'لا يزال ملف CSV يحتوي على منتجات فرنسية وأسعار باليورو.',
     pool: 'قائمة الاختيار', addToPool: 'أضف للقائمة', removeFromPool: 'إزالة من القائمة', row: 'SPU Code',
     poolEmpty: 'قائمة الاختيار فارغة', poolEmptyDesc: 'أضف المنتجات من صفحة التفاصيل.',
-    allCategories: 'كل الفئات', level1: 'الفئة الرئيسية', level2: 'الفئة الفرعية', level3: 'الفئة التفصيلية',
+    allCategories: 'كل الفئات', level1: 'الفئة 1', level2: 'الفئة 2', level3: 'الفئة 3',
     copySpuCodes: 'نسخ جميع رموز SPU', copied: 'تم النسخ', copyFailed: 'تعذر النسخ'
   },
   en: {
@@ -32,7 +32,7 @@ const translations = {
     commissionRate: 'Creator commission rate', seller: 'Store', frenchWarning: 'CSV still contains French products and euro prices.',
     pool: 'Selection pool', addToPool: 'Add to pool', removeFromPool: 'Remove from pool', row: 'SPU Code',
     poolEmpty: 'Your selection pool is empty', poolEmptyDesc: 'Add products from the product details.',
-    allCategories: 'All categories', level1: 'Level 1 category', level2: 'Level 2 category', level3: 'Level 3 category',
+    allCategories: 'All categories', level1: 'Level 1', level2: 'Level 2', level3: 'Level 3',
     copySpuCodes: 'Copy all SPU Codes', copied: 'Copied', copyFailed: 'Copy failed'
   },
   zh: {
@@ -96,6 +96,10 @@ const IconSearch = () => (
     <circle cx="11" cy="11" r="8"></circle>
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
   </svg>
+);
+
+const BrandLogo = () => (
+  <img className="brand-logo" src="assets/logo.png" alt="SEA IDEAL" />
 );
 
 const IconHome = ({ active }) => (
@@ -691,7 +695,7 @@ function App() {
   if (loadError) {
     return (
       <div className="app">
-        <div className="header"><div className="header-title">SA {t.title}</div></div>
+        <div className="header"><BrandLogo /></div>
         <div className="empty-state" role="alert">
           <div className="empty-title">{loadError === 'load' ? t.loadError : loadError}</div>
           <button className="sort-btn" onClick={loadProducts}>{t.retry}</button>
@@ -703,7 +707,7 @@ function App() {
   if (products.length === 0) {
     return (
       <div className="app">
-        <div className="header"><div className="header-title">SA {t.title}</div></div>
+        <div className="header"><BrandLogo /></div>
         <div className="empty-state">{t.emptyData}</div>
       </div>
     );
@@ -731,7 +735,7 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="header-title">SA {t.title}</div>
+            <BrandLogo />
           )}
           <div className="header-actions">
             <select className="language-select" aria-label="Language" value={locale} onChange={event => setLocale(event.target.value)}>
@@ -776,15 +780,15 @@ function App() {
 
       <div className="category-filter" aria-label={t.category}>
         <select aria-label={t.level1} value={categoryLevel1} onChange={event => handleCategoryChange(1, event.target.value)}>
-          <option value="">{t.level1}: {t.allCategories}</option>
+          <option value="">{t.level1}</option>
           {categoryOptions.level1.map(value => <option key={value} value={value}>{localizedCategory(value, t)}</option>)}
         </select>
         <select aria-label={t.level2} value={categoryLevel2} onChange={event => handleCategoryChange(2, event.target.value)} disabled={!categoryLevel1}>
-          <option value="">{t.level2}: {t.allCategories}</option>
+          <option value="">{t.level2}</option>
           {categoryOptions.level2.map(value => <option key={value} value={value}>{localizedCategory(value, t)}</option>)}
         </select>
         <select aria-label={t.level3} value={categoryLevel3} onChange={event => handleCategoryChange(3, event.target.value)} disabled={!categoryLevel2}>
-          <option value="">{t.level3}: {t.allCategories}</option>
+          <option value="">{t.level3}</option>
           {categoryOptions.level3.map(value => <option key={value} value={value}>{localizedCategory(value, t)}</option>)}
         </select>
       </div>
