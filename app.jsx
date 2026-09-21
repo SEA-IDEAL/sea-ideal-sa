@@ -5,7 +5,7 @@ const translations = {
     title: 'منتجات السعودية', products: 'منتج', merchants: 'متجر', fromMerchants: 'من', categoryLine: 1,
     search: 'ابحث عن منتج أو متجر...', category: 'الفئة', colors: 'الألوان', sizes: 'المقاسات',
     price: 'السعر', viewProduct: 'عرض المنتج', productCount: 'منتجات', browse: 'تصفح المنتجات',
-    viewAll: 'عرض الكل', allMerchants: 'جميع المتاجر', default: 'الافتراضي', priceAsc: 'السعر ↑',
+    viewAll: 'عرض الكل', allMerchants: 'جميع المتاجر', default: 'الافتراضي', priceAsc: 'السعر ↑', priceDesc: 'السعر ↓',
     commissionHigh: 'أعلى عمولة', allCommission: 'كل العمولات', highCommission: 'عمولة عالية ≥15%',
     mediumCommission: 'عمولة متوسطة 10-15%', lowCommission: 'عمولة منخفضة <10%',
     home: 'الرئيسية', allProducts: 'كل المنتجات', featured: 'عمولة عالية',
@@ -13,15 +13,16 @@ const translations = {
     emptyData: 'لا توجد منتجات. أضف بيانات إلى assets/products.csv.', noResults: 'لم يتم العثور على منتجات',
     tryAgain: 'جرّب بحثاً أو تصفية أخرى', loadMore: 'عرض المزيد', commission: 'العمولة',
     commissionRate: 'نسبة عمولة المنشئ', seller: 'المتجر', frenchWarning: 'لا يزال ملف CSV يحتوي على منتجات فرنسية وأسعار باليورو.',
-    pool: 'قائمة الاختيار', addToPool: 'أضف للقائمة', removeFromPool: 'إزالة من القائمة', row: 'الرمز',
+    pool: 'قائمة الاختيار', addToPool: 'أضف للقائمة', removeFromPool: 'إزالة من القائمة', row: 'SPU Code',
     poolEmpty: 'قائمة الاختيار فارغة', poolEmptyDesc: 'أضف المنتجات من صفحة التفاصيل.',
-    allCategories: 'كل الفئات', level1: 'الفئة الرئيسية', level2: 'الفئة الفرعية', level3: 'الفئة التفصيلية'
+    allCategories: 'كل الفئات', level1: 'الفئة الرئيسية', level2: 'الفئة الفرعية', level3: 'الفئة التفصيلية',
+    copySpuCodes: 'نسخ جميع رموز SPU', copied: 'تم النسخ', copyFailed: 'تعذر النسخ'
   },
   en: {
     title: 'Saudi Products', products: 'products', merchants: 'stores', fromMerchants: 'From', categoryLine: 1,
     search: 'Search products or stores...', category: 'Category', colors: 'Colors', sizes: 'Sizes',
     price: 'Price', viewProduct: 'View product', productCount: 'products', browse: 'Browse products',
-    viewAll: 'View all', allMerchants: 'All stores', default: 'Default', priceAsc: 'Price ↑',
+    viewAll: 'View all', allMerchants: 'All stores', default: 'Default', priceAsc: 'Price ↑', priceDesc: 'Price ↓',
     commissionHigh: 'Top commission', allCommission: 'All commissions', highCommission: 'High ≥15%',
     mediumCommission: 'Medium 10-15%', lowCommission: 'Low <10%',
     home: 'Home', allProducts: 'All products', featured: 'High commission',
@@ -29,15 +30,16 @@ const translations = {
     emptyData: 'No products yet. Add data to assets/products.csv.', noResults: 'No products found',
     tryAgain: 'Try another search or filter', loadMore: 'Show more', commission: 'Commission',
     commissionRate: 'Creator commission rate', seller: 'Store', frenchWarning: 'CSV still contains French products and euro prices.',
-    pool: 'Selection pool', addToPool: 'Add to pool', removeFromPool: 'Remove from pool', row: 'Row',
+    pool: 'Selection pool', addToPool: 'Add to pool', removeFromPool: 'Remove from pool', row: 'SPU Code',
     poolEmpty: 'Your selection pool is empty', poolEmptyDesc: 'Add products from the product details.',
-    allCategories: 'All categories', level1: 'Level 1 category', level2: 'Level 2 category', level3: 'Level 3 category'
+    allCategories: 'All categories', level1: 'Level 1 category', level2: 'Level 2 category', level3: 'Level 3 category',
+    copySpuCodes: 'Copy all SPU Codes', copied: 'Copied', copyFailed: 'Copy failed'
   },
   zh: {
     title: '沙特选品', products: '款商品', merchants: '个商家', fromMerchants: '来自', categoryLine: 0,
     search: '搜索商品或店铺...', category: '类目', colors: '颜色', sizes: '尺码',
     price: '售价', viewProduct: '查看商品', productCount: '款商品', browse: '进入选品',
-    viewAll: '查看全部', allMerchants: '全部商家', default: '默认', priceAsc: '价格↑',
+    viewAll: '查看全部', allMerchants: '全部商家', default: '默认', priceAsc: '价格↑', priceDesc: '价格↓',
     commissionHigh: '佣金最高', allCommission: '全部佣金', highCommission: '高佣 ≥15%',
     mediumCommission: '中佣 10-15%', lowCommission: '低佣 ＜10%',
     home: '首页', allProducts: '全部商品', featured: '高佣精选',
@@ -45,19 +47,18 @@ const translations = {
     emptyData: '暂无商品数据，请在 assets/products.csv 添加商品。', noResults: '没有找到相关商品',
     tryAgain: '试试其他关键词或筛选条件', loadMore: '加载更多', commission: '佣金',
     commissionRate: '创作者佣金率', seller: '所属商家', frenchWarning: '当前 CSV 仍包含法国商品与欧元价格，尚未替换为沙特商品数据。',
-    pool: '选品池', addToPool: '加入选品池', removeFromPool: '移出选品池', row: 'Row',
+    pool: '选品池', addToPool: '加入选品池', removeFromPool: '移出选品池', row: 'SPU Code',
     poolEmpty: '选品池还是空的', poolEmptyDesc: '可在商品详情中加入商品。',
-    allCategories: '全部类目', level1: '一级类目', level2: '二级类目', level3: '三级类目'
+    allCategories: '全部类目', level1: '一级类目', level2: '二级类目', level3: '三级类目',
+    copySpuCodes: '复制全部 SPU Code', copied: '已复制', copyFailed: '复制失败'
   }
 };
 
 // ========== Utility Functions ==========
 function parsePrice(priceStr) {
   if (!priceStr) return 0;
-  // Handle ranges like "19 €-26 €" -> take the lower price
-  const cleaned = priceStr.replace(/\s/g, '').replace(',', '.');
-  const match = cleaned.match(/[\d.]+/);
-  return match ? parseFloat(match[0]) : 0;
+  const match = priceStr.match(/\d+(?:[.,]\d+)?/);
+  return match ? parseFloat(match[0].replace(',', '.')) : 0;
 }
 
 function parseCommission(commStr) {
@@ -174,6 +175,13 @@ const IconPlus = () => (
 const IconCheck = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
+
+const IconCopy = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
   </svg>
 );
 
@@ -420,6 +428,7 @@ function App() {
   const [categoryLevel1, setCategoryLevel1] = useState('');
   const [categoryLevel2, setCategoryLevel2] = useState('');
   const [categoryLevel3, setCategoryLevel3] = useState('');
+  const [copyStatus, setCopyStatus] = useState('idle');
   const [poolRows, setPoolRows] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('selection-pool') || '[]');
@@ -544,6 +553,11 @@ function App() {
     return result;
   }, [products, searchQuery, selectedMerchant, sortBy, commissionFilter, categoryLevel1, categoryLevel2, categoryLevel3]);
 
+  const allPoolProducts = useMemo(() => {
+    const productByRow = new Map(products.map(product => [product.row, product]));
+    return poolRows.map(row => productByRow.get(row)).filter(Boolean);
+  }, [products, poolRows]);
+
   const poolProducts = useMemo(() => {
     const selected = new Set(poolRows);
     return filteredProducts.filter(product => selected.has(product.row));
@@ -551,7 +565,34 @@ function App() {
 
   const togglePool = useCallback((row) => {
     setPoolRows(current => current.includes(row) ? current.filter(item => item !== row) : [...current, row]);
+    setCopyStatus('idle');
   }, []);
+
+  const copyPoolSpuCodes = useCallback(async () => {
+    const text = allPoolProducts.map(product => product.row).join('\n');
+    if (!text) return;
+    let textarea;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        if (!document.execCommand('copy')) throw new Error('Copy command failed');
+      }
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 1800);
+    } catch (error) {
+      console.error('Failed to copy SPU Codes:', error);
+      setCopyStatus('error');
+    } finally {
+      textarea?.remove();
+    }
+  }, [allPoolProducts]);
 
   const handleProductClick = useCallback((product) => {
     setSelectedProduct(product);
@@ -602,6 +643,18 @@ function App() {
     setViewMode('pool');
     window.scrollTo(0, 0);
   }, []);
+
+  const handleSort = useCallback((value) => {
+    setSortBy(value);
+    if (viewMode === 'explore') setViewMode('allProducts');
+    window.scrollTo(0, 0);
+  }, [viewMode]);
+
+  const handlePriceSort = useCallback(() => {
+    setSortBy(current => current === 'price-asc' ? 'price-desc' : 'price-asc');
+    if (viewMode === 'explore') setViewMode('allProducts');
+    window.scrollTo(0, 0);
+  }, [viewMode]);
 
   const handleCategoryChange = useCallback((level, value) => {
     if (level === 1) {
@@ -768,35 +821,40 @@ function App() {
 
       {/* Sort Bar */}
       <div className="sort-bar">
-        <span className="sort-label">
-          {viewMode === 'merchantDetail'
-            ? `${filteredProducts.length} ${t.products}`
-            : viewMode === 'pool'
-            ? `${poolProducts.length} ${t.products}`
-            : viewMode === 'allProducts'
-            ? `${filteredProducts.length} ${t.products}`
-            : `${t.fromMerchants} ${merchants.length} ${t.merchants}`}
-        </span>
+        {viewMode === 'pool' ? (
+          <button className={`pool-copy ${copyStatus}`} onClick={copyPoolSpuCodes} disabled={allPoolProducts.length === 0}>
+            <IconCopy />
+            <span>{copyStatus === 'copied' ? t.copied : copyStatus === 'error' ? t.copyFailed : t.copySpuCodes}</span>
+          </button>
+        ) : (
+          <span className="sort-label">
+            {viewMode === 'merchantDetail'
+              ? `${filteredProducts.length} ${t.products}`
+              : viewMode === 'allProducts'
+              ? `${filteredProducts.length} ${t.products}`
+              : `${t.fromMerchants} ${merchants.length} ${t.merchants}`}
+          </span>
+        )}
         <div className="sort-options">
           <button
             className={`sort-btn ${sortBy === 'default' ? 'active' : ''}`}
-            onClick={() => setSortBy('default')}
+            onClick={() => handleSort('default')}
           >
             {t.default}
           </button>
           {hasCommission && (
             <button
               className={`sort-btn ${sortBy === 'commission-desc' ? 'active' : ''}`}
-              onClick={() => setSortBy('commission-desc')}
+              onClick={() => handleSort('commission-desc')}
             >
               {t.commissionHigh}
             </button>
           )}
           <button
-            className={`sort-btn ${sortBy === 'price-asc' ? 'active' : ''}`}
-            onClick={() => setSortBy('price-asc')}
+            className={`sort-btn ${sortBy === 'price-asc' || sortBy === 'price-desc' ? 'active' : ''}`}
+            onClick={handlePriceSort}
           >
-            {t.priceAsc}
+            {sortBy === 'price-desc' ? t.priceDesc : t.priceAsc}
           </button>
         </div>
       </div>

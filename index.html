@@ -255,6 +255,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       padding: 8px 16px 12px;
     }
 
@@ -266,7 +267,38 @@
     .sort-options {
       display: flex;
       gap: 4px;
+      flex-shrink: 0;
     }
+
+    .pool-copy {
+      flex: 1;
+      max-width: 220px;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      justify-content: center;
+    }
+
+    .pool-copy span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pool-copy svg { flex-shrink: 0; color: var(--accent); }
+    .pool-copy.copied { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+    .pool-copy.error { color: #b42318; }
+    .pool-copy:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .sort-btn {
       padding: 6px 12px;
@@ -1104,6 +1136,6 @@
     });
   </script>
 
-  <script type="text/babel" data-presets="react-classic" src="app.jsx?v=20260921-pool"></script>
+  <script type="text/babel" data-presets="react-classic" src="app.jsx?v=20260921-sort-copy"></script>
 </body>
 </html>
